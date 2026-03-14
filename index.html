@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Okada Brain</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="map-viewport">
+            <img src="./assets/front-back-body-chart-sample.png" class="base-graphic" alt="Anatomical Chart">
+            <svg id="body-map" viewBox="0 0 372.667 414.667" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+
+        <div id="input-modal" class="modal">
+            <div class="modal-content">
+                <h3 id="modal-title">Edit Point</h3>
+                
+                <div class="input-group">
+                    <label>Fever: <span id="val-heat">0</span></label>
+                    <div class="stepper">
+                        <button class="step-btn" onclick="adjust('slide-heat', -1)">-</button>
+                        <input type="range" id="slide-heat" min="0" max="5" value="0" step="1">
+                        <button class="step-btn" onclick="adjust('slide-heat', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Stiffness: <span id="val-stiffness">0</span></label>
+                    <div class="stepper">
+                        <button class="step-btn" onclick="adjust('slide-stiffness', -1)">-</button>
+                        <input type="range" id="slide-stiffness" min="0" max="5" value="0" step="1">
+                        <button class="step-btn" onclick="adjust('slide-stiffness', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Pain: <span id="val-pain">0</span></label>
+                    <div class="stepper">
+                        <button class="step-btn" onclick="adjust('slide-pain', -1)">-</button>
+                        <input type="range" id="slide-pain" min="0" max="5" value="0" step="1">
+                        <button class="step-btn" onclick="adjust('slide-pain', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="btn-clear">Clear</button>
+                    <button id="btn-cancel">Cancel</button>
+                    <button id="btn-save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
