@@ -18,7 +18,6 @@ const Store = {
         const data = this.patientVector[id];
 
         // 1. DEACTIVATION LOGIC (Reset to Ghost Gray)
-        // If all values are 0, it's not a "Key Point"
         if (data.heat === 0 && data.stiffness === 0 && data.pain === 0) {
             el.style.setProperty("fill", "rgba(0,0,0,0.05)", "important");
             el.style.setProperty("stroke", "#d3d3d3", "important"); // Ghost Gray
@@ -30,7 +29,6 @@ const Store = {
 
         // 2. HEAT -> Fill (Red Opacity)
         const heatOpacity = data.heat / 5;
-        // Small baseline opacity (0.1) just to show the shape is active
         const finalFillOpacity = 0.1 + heatOpacity * 0.9;
         el.style.setProperty(
             "fill",
@@ -41,10 +39,8 @@ const Store = {
 
         // 3. PAIN/TENDERNESS -> Stroke Color (Blue to Red)
         if (data.pain === 0) {
-            // If it's a key point but pain is 0, make the outline BLUE
-            el.style.setProperty("stroke", "#3498db", "important");
+            el.style.setProperty("stroke", "#3498db", "important"); // Active Blue
         } else {
-            // Transition from Active Blue (52, 152, 219) to High-Pain Red (192, 57, 43)
             const p = data.pain / 5;
             const r = Math.round(52 + p * (192 - 52));
             const g = Math.round(152 - p * 152);
@@ -56,7 +52,7 @@ const Store = {
             );
         }
 
-        // 4. STIFFNESS -> Stroke Width
+        // 4. STIFFNESS -> Stroke Width (Capped for smaller shapes)
         const thickness = 1 + data.stiffness * 0.7;
         el.style.setProperty("stroke-width", `${thickness}px`, "important");
         el.style.setProperty("paint-order", "stroke fill", "important");
@@ -64,31 +60,38 @@ const Store = {
 };
 
 // 3. INITIALIZATION: Render SVG and attach events
-const svg = document.getElementById("body-map");
 const tooltip = document.getElementById("tooltip");
 
-if (svg) {
-    anatomicalPoints.forEach((pt) => {
-        // Inject the literal string
-        svg.insertAdjacentHTML("beforeend", pt.svgCode);
+// Map your view names ("front" and "head") to their HTML container IDs
+const viewContainers = {
+    front: document.getElementById("body-map-front"),
+    head: document.getElementById("body-map-head"),
+};
+
+anatomicalPoints.forEach((pt) => {
+    const container = viewContainers[pt.view];
+
+    if (container) {
+        // Inject the literal string into the correct view
+        container.insertAdjacentHTML("beforeend", pt.svgCode);
 
         const el = document.getElementById(pt.id);
         if (el) {
             // Apply baseline styles
             el.style.setProperty("fill", "rgba(0,0,0,0.05)", "important");
-            el.style.setProperty("stroke", "rgba(0,0,0,0.2)", "important");
+            el.style.setProperty("stroke", "#d3d3d3", "important");
             el.style.setProperty("stroke-width", "1px", "important");
             el.style.setProperty("fill-opacity", "0.3", "important");
             el.style.cursor = "pointer";
 
             // --- HOVER LOGIC ---
             el.onmouseenter = (e) => {
-                tooltip.innerText = pt.id;
+                // Formatting ID name for cleaner display
+                tooltip.innerText = pt.id.replace(/-/g, " ").toUpperCase();
                 tooltip.style.display = "block";
             };
 
             el.onmousemove = (e) => {
-                // Offset the tooltip slightly from the cursor
                 tooltip.style.left = e.pageX + 15 + "px";
                 tooltip.style.top = e.pageY + 15 + "px";
             };
@@ -99,8 +102,8 @@ if (svg) {
 
             el.onclick = () => openModal(pt.id);
         }
-    });
-}
+    }
+});
 
 // 4. MODAL & STEPPER LOGIC
 const modal = document.getElementById("input-modal");
@@ -108,7 +111,6 @@ const sHeat = document.getElementById("slide-heat");
 const sStiff = document.getElementById("slide-stiffness");
 const sPain = document.getElementById("slide-pain");
 
-// Global function for +/- buttons
 window.adjust = function (id, delta) {
     const slider = document.getElementById(id);
     const newValue = parseInt(slider.value) + delta;
@@ -127,7 +129,8 @@ function openModal(id) {
         pain: 0,
     };
 
-    document.getElementById("modal-title").innerText = `Point: ${id}`;
+    document.getElementById("modal-title").innerText =
+        `Point: ${id.replace(/-/g, " ").toUpperCase()}`;
     sHeat.value = existing.heat;
     sStiff.value = existing.stiffness;
     sPain.value = existing.pain;
@@ -142,10 +145,8 @@ function updateDisplayValues() {
     document.getElementById("val-pain").innerText = sPain.value;
 }
 
-// Input Listeners
 [sHeat, sStiff, sPain].forEach((s) => (s.oninput = updateDisplayValues));
 
-// Button Actions
 document.getElementById("btn-save").onclick = () => {
     Store.update(Store.activeId, {
         heat: parseInt(sHeat.value),
@@ -162,3 +163,21 @@ document.getElementById("btn-clear").onclick = () => {
 
 document.getElementById("btn-cancel").onclick = () =>
     (modal.style.display = "none");
+
+// 5. VIEW SWITCHING LOGIC
+window.switchView = function (viewId) {
+    // 1. Handle Buttons
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.classList.remove("active");
+        if (btn.innerText.toLowerCase().includes(viewId))
+            btn.classList.add("active");
+    });
+
+    // 2. Handle View Content
+    document.querySelectorAll(".view-group").forEach((group) => {
+        group.classList.remove("active");
+    });
+
+    // Show the selected one (front or head)
+    document.getElementById(`view-${viewId}`).classList.add("active");
+};

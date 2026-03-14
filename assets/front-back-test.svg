@@ -25,9 +25,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="2.5476308"
-     inkscape:cx="144.84046"
-     inkscape:cy="210.1953"
+     inkscape:zoom="7.205788"
+     inkscape:cx="121.15261"
+     inkscape:cy="84.237838"
      inkscape:window-width="1920"
      inkscape:window-height="986"
      inkscape:window-x="-11"
@@ -362,20 +362,6 @@
        style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-width:0.991394;stroke-opacity:1"
        d="m 117.54398,158.06201 6.38959,1.90784 -3.19479,18.80584 -8.61208,-3.40685 z"
        id="L-outer-ribs" />
-    <ellipse
-       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1"
-       id="forehead"
-       cx="93.223869"
-       cy="53.244152"
-       rx="6.7242222"
-       ry="2.4918642" />
-    <ellipse
-       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1"
-       id="crown"
-       cx="93.019173"
-       cy="44.180447"
-       rx="4.3313341"
-       ry="2.4785144" />
     <ellipse
        style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1"
        id="occipital"
@@ -715,5 +701,12 @@
        style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1"
        d="m 285.7557,174.08331 5.88782,-29.43912 8.04669,1.17757 -5.00465,30.61668 z"
        id="R-rear-ribs" />
+    <ellipse
+       style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1"
+       id="forehead"
+       cx="93.258362"
+       cy="48.29451"
+       rx="10.547077"
+       ry="4.8572063" />
   </g>
 </svg>

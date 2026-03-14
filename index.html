@@ -3,14 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Okada Brain</title>
+    <title>Okada Brain - Assessment</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
+        
+        <nav class="view-tabs">
+            <button class="tab-btn active" onclick="switchView('front')">Body View</button>
+            <button class="tab-btn" onclick="switchView('head')">Head & Neck</button>
+        </nav>
+
         <div class="map-viewport">
-            <img src="./assets/front-back-body-chart-sample.png" class="base-graphic" alt="Anatomical Chart">
-            <svg id="body-map" viewBox="0 0 372.667 414.667" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div id="view-front" class="view-group active">
+                <h3>Front View</h3>
+                <div class="svg-wrapper">
+                    <img src="./assets/front-back-test.svg" class="base-graphic" alt="Front/Back Chart">
+                    <svg id="body-map-front" viewBox="0 0 372.667 414.667"></svg> 
+                </div>
+            </div>
+
+            <div id="view-head" class="view-group">
+                <h3>Head & Neck Profile</h3>
+                <div class="svg-wrapper">
+                    <img src="./assets/head-profile-top-test.svg" class="base-graphic" alt="Head Chart">
+                    <svg id="body-map-head" viewBox="0 0 456 320"></svg>
+                </div>
+            </div>
         </div>
 
         <div id="input-modal" class="modal">

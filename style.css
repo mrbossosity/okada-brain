@@ -1,54 +1,92 @@
 :root {
     --primary: #2c3e50;
     --accent: #e74c3c;
+    --active-blue: #3498db;
 }
 
-body { font-family: sans-serif; background: #f4f4f4; margin: 0; }
+body { 
+    font-family: sans-serif; 
+    background: #f4f4f4; 
+    margin: 0; 
+}
 
-.app-container { display: flex; justify-content: center; padding: 20px; }
+/* 1. LAYOUT */
+.app-container { 
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; 
+}
 
+/* Container for both charts */
 .map-viewport {
-    position: relative;
-    width: 600px; /* Match your PNG aspect ratio */
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap; /* Stacks on small screens */
     background: white;
+    padding: 30px;
+    border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
-.base-graphic { width: 100%; display: block; pointer-events: none; opacity: 0.4;}
-
-#body-map {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+.view-group {
+    text-align: center;
 }
 
-/* The shapes traced in Inkscape */
-.hitbox {
+.view-group h3 {
+    color: var(--primary);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+/* 2. THE STACKING LOGIC */
+.svg-wrapper {
+    position: relative; /* Base for absolute children */
+    display: inline-block;
+    background: #fff;
+}
+
+.base-graphic { 
+    display: block;
+    width: 400px; /* Adjust this width based on your preference */
+    height: auto;
+    pointer-events: none; /* Clicks pass through to the SVG */
+    opacity: 0.5; /* Dims chart so markers are visible */
+}
+
+#body-map-front, 
+#body-map-head {
+    position: absolute;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    z-index: 2; /* Sits on top of the image */
+}
+
+/* 3. MARKER STYLING */
+svg * {
     cursor: pointer;
-    /* Default state: Very light gray and thin border */
-    fill: rgba(0,0,0,0.05) !important;
-    stroke: #d3d3d3 !important; 
-    stroke-width: 1px !important;
     transition: all 0.2s ease;
 }
 
-.hitbox:hover {
-    stroke: #3498db !important; /* Blue highlight for interaction feedback */
-}
-
+/* 4. TOOLTIP */
 .tooltip {
     position: absolute;
-    padding: 5px 10px;
-    background: rgba(44, 62, 80, 0.9);
+    padding: 6px 12px;
+    background: rgba(44, 62, 80, 0.95);
     color: white;
     border-radius: 4px;
-    font-size: 12px;
-    pointer-events: none; /* Crucial: mouse ignores this div */
-    display: none;        /* Hidden by default */
+    font-size: 11px;
+    pointer-events: none;
+    display: none;
     z-index: 1000;
-    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* Modal Styling */
+/* 5. MODAL STYLING */
 .modal {
     display: none;
     position: fixed;
@@ -61,28 +99,26 @@ body { font-family: sans-serif; background: #f4f4f4; margin: 0; }
 .modal-content {
     background: white;
     width: 300px;
-    margin: 15% auto;
+    margin: 10% auto;
     padding: 25px;
     border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
 .input-group { margin-bottom: 20px; }
-input[type="range"] { width: 100%; }
-.actions { display: flex; justify-content: space-between; }
-button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
-#btn-save { background: var(--primary); color: white; }
+.input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
 
+/* 6. STEPPER */
 .stepper {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-top: 5px;
 }
 
 .step-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 5%;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
     border: 1px solid #ccc;
     background: white;
     font-weight: bold;
@@ -93,10 +129,70 @@ button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; 
     transition: background 0.2s;
 }
 
-.step-btn:hover {
-    background: #f0f0f0;
+.step-btn:hover { background: #f0f0f0; }
+.stepper input[type="range"] { flex-grow: 1; }
+
+/* 7. ACTIONS */
+.actions { 
+    display: flex; 
+    justify-content: space-between; 
+    gap: 10px;
+    margin-top: 20px;
 }
 
-.stepper input[type="range"] {
-    flex-grow: 1;
+button { 
+    padding: 10px 15px; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold;
+}
+
+#btn-save { background: var(--primary); color: white; flex: 2; }
+#btn-clear { background: #eee; color: #666; flex: 1; }
+#btn-cancel { background: transparent; color: #888; border: 1px solid #ddd; }
+
+
+/* Tab Navigation */
+.view-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 10px 25px;
+    background: #ddd;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Visibility Toggle */
+.view-group {
+    display: none; /* Hide all by default */
+}
+
+.view-group.active {
+    display: block; /* Only show the one with .active */
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ensure viewport doesn't jump sizes when switching */
+.map-viewport {
+    min-width: 460px;
+    min-height: 500px;
 }
