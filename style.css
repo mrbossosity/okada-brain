@@ -143,60 +143,102 @@ svg * {
 
 .modal-content {
     background: white;
-    width: 300px;
+    width: 320px; /* Slightly wider for better button fit */
     margin: 10vh auto; 
-    padding: 25px;
+    padding: 20px;
     border-radius: 12px;
     box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
-.input-group { margin-bottom: 20px; }
-.input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+.input-group { margin-bottom: 18px; }
+.input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; font-size: 0.85rem; }
 
-/* 7. STEPPER & ACTIONS */
-.stepper {
+/* 7. BUTTON SCALE (1-5) */
+.button-scale {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 6px;
 }
 
-.step-btn {
-    width: 34px;
-    height: 34px;
+.button-scale button {
+    flex: 1; /* This makes them stretch to fill the container */
+    height: 38px;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
     border-radius: 6px;
-    border: 1px solid #ccc;
-    background: white;
     font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
+    color: #444;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.step-btn:hover { background: #f0f0f0; }
-.stepper input[type="range"] { flex-grow: 1; }
+/* Ensure all modal buttons show the pointer cursor */
+.modal-content button {
+    cursor: pointer;
+}
 
+/* Optional: Add a subtle hover effect to the 1-5 buttons for better UX */
+.button-scale button:hover {
+    background: #e8e8e8;
+    border-color: #bbb;
+}
+
+/* Ensure the active button keeps its pointer but loses the hover gray */
+.button-scale button.active:hover {
+    filter: brightness(0.9); /* Slightly darkens the active color instead of turning gray */
+}
+
+/* The Save/Clear/Cancel buttons should also react slightly */
+.action-main:hover {
+    filter: brightness(1.1);
+}
+
+.action-secondary button:hover {
+    background: #f0f0f0;
+}
+
+/* HIGH VISIBILITY ACTIVE STATES */
+.button-scale button.active {
+    color: white !important;
+    border-color: rgba(0,0,0,0.1) !important;
+}
+
+/* Custom colors based on metric type */
+.button-scale[data-metric="heat"] button.active { background: #e74c3c; }
+.button-scale[data-metric="stiffness"] button.active { background: #f39c12; }
+.button-scale[data-metric="pain"] button.active { background: #9b59b6; }
+
+/* 8. MODAL ACTIONS (Save/Cancel/Clear) */
 .actions { 
     display: flex; 
-    justify-content: space-between; 
+    flex-direction: column; 
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
-button { 
-    padding: 10px 15px; 
-    border: none; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    font-weight: bold;
+.action-main {
+    width: 100%;
+    padding: 12px; /* Reduced from 16px to fix the "too big" feel */
+    background: var(--primary);
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-#btn-save { background: var(--primary); color: white; flex: 2; }
-#btn-clear { background: #eee; color: #666; flex: 1; }
-#btn-cancel { background: transparent; color: #888; border: 1px solid #ddd; }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+.action-secondary {
+    display: flex;
+    gap: 8px;
 }
+
+.action-secondary button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+#btn-clear { background: #fff; color: var(--accent); border: 1px solid #fadbd8; }
+#btn-cancel { background: #f8f9fa; color: #888; border: 1px solid #eee; }

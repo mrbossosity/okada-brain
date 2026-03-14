@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Okada Brain - Assessment</title>
+    <title>Okada Brain</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,7 +17,6 @@
 
         <div class="map-viewport">
             <div id="view-front" class="view-group active">
-                <h3>Front View</h3>
                 <div class="svg-wrapper">
                     <img src="./assets/front-back-test.svg" class="base-graphic" alt="Front/Back Chart">
                     <svg id="body-map-front" viewBox="0 0 372.667 414.667"></svg> 
@@ -25,7 +24,6 @@
             </div>
 
             <div id="view-head" class="view-group">
-                <h3>Head & Neck Profile</h3>
                 <div class="svg-wrapper">
                     <img src="./assets/head-profile-top-test.svg" class="base-graphic" alt="Head Chart">
                     <svg id="body-map-head" viewBox="0 0 456 320"></svg>
@@ -38,36 +36,44 @@
                 <h3 id="modal-title">Edit Point</h3>
                 
                 <div class="input-group">
-                    <label>Fever: <span id="val-heat">0</span></label>
-                    <div class="stepper">
-                        <button class="step-btn" onclick="adjust('slide-heat', -1)">-</button>
-                        <input type="range" id="slide-heat" min="0" max="5" value="0" step="1">
-                        <button class="step-btn" onclick="adjust('slide-heat', 1)">+</button>
+                    <label>Fever</label>
+                    <div class="button-scale" data-metric="heat">
+                        <button onclick="setMetric('heat', 1)">1</button>
+                        <button onclick="setMetric('heat', 2)">2</button>
+                        <button onclick="setMetric('heat', 3)">3</button>
+                        <button onclick="setMetric('heat', 4)">4</button>
+                        <button onclick="setMetric('heat', 5)">5</button>
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Stiffness: <span id="val-stiffness">0</span></label>
-                    <div class="stepper">
-                        <button class="step-btn" onclick="adjust('slide-stiffness', -1)">-</button>
-                        <input type="range" id="slide-stiffness" min="0" max="5" value="0" step="1">
-                        <button class="step-btn" onclick="adjust('slide-stiffness', 1)">+</button>
+                    <label>Stiffness</label>
+                    <div class="button-scale" data-metric="stiffness">
+                        <button onclick="setMetric('stiffness', 1)">1</button>
+                        <button onclick="setMetric('stiffness', 2)">2</button>
+                        <button onclick="setMetric('stiffness', 3)">3</button>
+                        <button onclick="setMetric('stiffness', 4)">4</button>
+                        <button onclick="setMetric('stiffness', 5)">5</button>
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Pain: <span id="val-pain">0</span></label>
-                    <div class="stepper">
-                        <button class="step-btn" onclick="adjust('slide-pain', -1)">-</button>
-                        <input type="range" id="slide-pain" min="0" max="5" value="0" step="1">
-                        <button class="step-btn" onclick="adjust('slide-pain', 1)">+</button>
+                    <label>Pain</label>
+                    <div class="button-scale" data-metric="pain">
+                        <button onclick="setMetric('pain', 1)">1</button>
+                        <button onclick="setMetric('pain', 2)">2</button>
+                        <button onclick="setMetric('pain', 3)">3</button>
+                        <button onclick="setMetric('pain', 4)">4</button>
+                        <button onclick="setMetric('pain', 5)">5</button>
                     </div>
                 </div>
 
                 <div class="actions">
-                    <button id="btn-clear">Clear</button>
-                    <button id="btn-cancel">Cancel</button>
-                    <button id="btn-save">Save</button>
+                    <button id="btn-save" class="action-main">Save Assessment</button>
+                    <div class="action-secondary">
+                        <button id="btn-clear">Clear</button>
+                        <button id="btn-cancel">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>

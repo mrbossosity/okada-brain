@@ -98,19 +98,14 @@ anatomicalPoints.forEach((pt) => {
     }
 });
 
-// 4. MODAL & STEPPER LOGIC
+// 4. MODAL & BUTTON SCALE LOGIC
 const modal = document.getElementById("input-modal");
-const sHeat = document.getElementById("slide-heat");
-const sStiff = document.getElementById("slide-stiffness");
-const sPain = document.getElementById("slide-pain");
+let tempState = { heat: 0, stiffness: 0, pain: 0 };
 
-window.adjust = function (id, delta) {
-    const slider = document.getElementById(id);
-    const newValue = parseInt(slider.value) + delta;
-    if (newValue >= 0 && newValue <= 5) {
-        slider.value = newValue;
-        updateDisplayValues();
-    }
+window.setMetric = function (metric, value) {
+    // Toggle logic: click same value to reset to 0
+    tempState[metric] = tempState[metric] === value ? 0 : value;
+    updateModalUI();
 };
 
 function openModal(id) {
@@ -120,29 +115,43 @@ function openModal(id) {
         stiffness: 0,
         pain: 0,
     };
+
+    tempState = { ...existing };
+
     document.getElementById("modal-title").innerText =
         `Point: ${id.replace(/-/g, " ").toUpperCase()}`;
-    sHeat.value = existing.heat;
-    sStiff.value = existing.stiffness;
-    sPain.value = existing.pain;
-    updateDisplayValues();
+
+    updateModalUI();
     modal.style.display = "block";
 }
 
-function updateDisplayValues() {
-    document.getElementById("val-heat").innerText = sHeat.value;
-    document.getElementById("val-stiffness").innerText = sStiff.value;
-    document.getElementById("val-pain").innerText = sPain.value;
+function updateModalUI() {
+    ["heat", "stiffness", "pain"].forEach((metric) => {
+        const container = document.querySelector(
+            `.button-scale[data-metric="${metric}"]`,
+        );
+        if (!container) return;
+
+        const buttons = container.querySelectorAll("button");
+        buttons.forEach((btn, index) => {
+            const val = index + 1;
+            if (tempState[metric] === val) {
+                btn.classList.add("active");
+                // Scale is handled via CSS transition for smoothness,
+                // but we keep the inline style for that extra "pop"
+                btn.style.transform = "scale(1.15)";
+                btn.style.zIndex = "2";
+            } else {
+                btn.classList.remove("active");
+                btn.style.transform = "scale(1)";
+                btn.style.zIndex = "1";
+            }
+        });
+    });
 }
 
-[sHeat, sStiff, sPain].forEach((s) => (s.oninput = updateDisplayValues));
-
 document.getElementById("btn-save").onclick = () => {
-    Store.update(Store.activeId, {
-        heat: parseInt(sHeat.value),
-        stiffness: parseInt(sStiff.value),
-        pain: parseInt(sPain.value),
-    });
+    Store.update(Store.activeId, { ...tempState });
     modal.style.display = "none";
 };
 
@@ -153,6 +162,13 @@ document.getElementById("btn-clear").onclick = () => {
 
 document.getElementById("btn-cancel").onclick = () =>
     (modal.style.display = "none");
+
+// Close modal when clicking the outside overlay
+window.onclick = function (event) {
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};
 
 // 5. VIEW SWITCHING LOGIC (Fixed Match Logic)
 window.switchView = function (viewId) {
