@@ -135,28 +135,82 @@
         <div id="disease-modal" class="modal">
             <div class="modal-content">
                 <h2>Add Condition</h2>
+
                 <div class="metric-group">
-                    <label>Body System</label>
-                    <select id="disease-system" onchange="updateDiseaseList()">
-                        <option value="cardiovascular">Cardiovascular</option>
-                        <option value="respiratory">Respiratory</option>
-                        <option value="digestive">Digestive</option>
-                        <option value="nervous">Nervous</option>
-                        <option value="musculoskeletal">Musculoskeletal</option>
-                        <option value="endocrine">Endocrine</option>
-                        <option value="immune">Immune</option>
-                        <option value="dermatological">Dermatological</option>
-                        <option value="urinary">Urinary</option>
-                        <option value="reproductive">Reproductive</option>
-                        <option value="mental">Mental Health</option>
-                    </select>
+                    <label>Quick Search</label>
+                    <input
+                        type="text"
+                        id="disease-search"
+                        placeholder="Search (e.g. Asthma, Diabetes)..."
+                        oninput="searchDiseases()"
+                    />
+                    <div
+                        id="search-results"
+                        class="tags-container"
+                        style="
+                            display: none;
+                            max-height: 180px;
+                            overflow-y: auto;
+                            border: 1px solid #ddd;
+                            margin-top: 8px;
+                            padding: 5px;
+                            border-radius: 6px;
+                            background: #fff;
+                        "
+                    ></div>
                 </div>
-                <div class="metric-group">
-                    <label>Specific Diagnosis</label>
-                    <select id="disease-name">
-                        <option value="">Select System First...</option>
-                    </select>
+
+                <div id="system-selectors">
+                    <div class="metric-group">
+                        <label>Body System</label>
+                        <select
+                            id="disease-system"
+                            onchange="updateDiseaseList()"
+                        >
+                            <option value="">Select System...</option>
+                            <option value="general">General & Lifestyle</option>
+                            <option value="mental">Mental Health</option>
+
+                            <option value="cardiovascular">
+                                Cardiovascular (Heart)
+                            </option>
+                            <option value="respiratory">
+                                Respiratory (Lungs)
+                            </option>
+                            <option value="digestive">Digestive</option>
+
+                            <option value="musculoskeletal">
+                                Musculoskeletal (Joints/Bones)
+                            </option>
+                            <option value="nervous">
+                                Nervous (Brain & Nerves)
+                            </option>
+                            <option value="sensory">
+                                Sensory (Eyes, Ears, Nose)
+                            </option>
+
+                            <option value="endocrine">
+                                Endocrine (Hormones)
+                            </option>
+                            <option value="immune">Immune & Lymphatic</option>
+
+                            <option value="urinary">
+                                Urinary (Kidneys/Bladder)
+                            </option>
+                            <option value="reproductive">Reproductive</option>
+                            <option value="dermatological">
+                                Dermatological (Skin/Hair)
+                            </option>
+                        </select>
+                    </div>
+                    <div class="metric-group">
+                        <label>Specific Diagnosis</label>
+                        <select id="disease-name">
+                            <option value="">Select System First...</option>
+                        </select>
+                    </div>
                 </div>
+
                 <div class="actions">
                     <button class="action-main" onclick="saveDisease()">
                         ADD TO NOTES

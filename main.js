@@ -228,6 +228,53 @@ window.updateDiseaseList = () => {
     });
 };
 
+// --- NEW: SEARCH FUNCTIONALITY ---
+window.searchDiseases = () => {
+    const query = document.getElementById("disease-search").value.toLowerCase();
+    const resultsContainer = document.getElementById("search-results");
+    const selectors = document.getElementById("system-selectors");
+
+    if (query.length < 2) {
+        resultsContainer.style.display = "none";
+        selectors.style.opacity = "1";
+        selectors.style.pointerEvents = "auto";
+        return;
+    }
+
+    const filtered = diseases.filter((d) =>
+        d.name.toLowerCase().includes(query),
+    );
+
+    selectors.style.opacity = "0.2";
+    selectors.style.pointerEvents = "none";
+    resultsContainer.style.display = "block";
+    resultsContainer.innerHTML = "";
+
+    filtered.forEach((d) => {
+        const div = document.createElement("div");
+        div.className = "tag-item";
+        div.style.marginBottom = "4px";
+        div.innerHTML = `<span style="font-size: 0.65rem; color: #7f8c8d; width: 80px; display: inline-block;">[${d.system}]</span> <span>${d.name}</span>`;
+        div.onclick = () => {
+            document.getElementById("disease-system").value = d.system;
+            window.updateDiseaseList();
+            document.getElementById("disease-name").value = d.id;
+
+            // Reset Search UI
+            document.getElementById("disease-search").value = "";
+            resultsContainer.style.display = "none";
+            selectors.style.opacity = "1";
+            selectors.style.pointerEvents = "auto";
+        };
+        resultsContainer.appendChild(div);
+    });
+
+    if (filtered.length === 0) {
+        resultsContainer.innerHTML =
+            "<div style='padding: 10px; font-size: 0.8rem; color: #999;'>No matches found</div>";
+    }
+};
+
 // --- TAG TRACKING LOGIC ---
 const renderConcerns = () => {
     const container = document.getElementById("concerns-list");
