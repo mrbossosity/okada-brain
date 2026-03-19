@@ -1,4 +1,6 @@
 import { anatomicalPoints } from "./points-data.js";
+import { diseases } from "./disease-data.js";
+import { regions } from "./regions-data.js";
 
 const Store = {
     patientVector: {},
@@ -7,7 +9,7 @@ const Store = {
     editingConcernId: null,
 
     update(id, data) {
-        this.patientVector[id] = { ...data };
+        this.patientVector[id] = { id, ...data };
         this.syncUI(id);
     },
 
@@ -56,6 +58,17 @@ const viewContainers = {
     front: document.getElementById("body-map-front"),
     head: document.getElementById("body-map-head"),
 };
+
+// INITIALIZE PAIN REGIONS DROPDOWN
+const painPartSelect = document.getElementById("pain-part");
+if (painPartSelect) {
+    regions.forEach((reg) => {
+        const opt = document.createElement("option");
+        opt.value = reg.id;
+        opt.innerText = reg.name;
+        painPartSelect.appendChild(opt);
+    });
+}
 
 // INITIALIZE SVG POINTS
 anatomicalPoints.forEach((pt) => {
@@ -113,9 +126,14 @@ window.setMetric = (m, v) => {
 
 function openModal(id) {
     Store.activeId = id;
-    tempState = {
-        ...(Store.patientVector[id] || { heat: 0, stiffness: 0, pain: 0 }),
+    const existing = Store.patientVector[id] || {
+        heat: 0,
+        stiffness: 0,
+        pain: 0,
     };
+    const { id: _, ...metrics } = existing;
+    tempState = { ...metrics };
+
     document.getElementById("modal-title").innerText = id
         .replace(/-/g, " ")
         .toUpperCase();
@@ -165,11 +183,12 @@ window.switchView = (v) => {
 
 window.exportJSON = () => {
     const exportData = {
-        "key points": Store.patientVector,
+        "key points": Object.values(Store.patientVector),
         diseases: Store.concerns.filter((c) => c.system),
         pain: Store.concerns.filter((c) => c.part),
         notes: document.getElementById("clinical-notes").value,
     };
+
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
         type: "application/json",
     });
@@ -179,14 +198,7 @@ window.exportJSON = () => {
     a.click();
 };
 
-// --- DISEASE & PAIN MODAL DATA ---
-const diseaseData = {
-    respiratory: ["Asthma", "COPD", "Bronchitis"],
-    cardiovascular: ["Hypertension", "Arrhythmia", "CAD"],
-    endocrine: ["Diabetes Type 1", "Diabetes Type 2", "Hypothyroidism"],
-    nervous: ["Sciatica", "Neuropathy", "Multiple Sclerosis"],
-};
-
+// --- DISEASE & PAIN MODAL LOGIC ---
 window.openConcernsModal = () =>
     (document.getElementById("disease-modal").style.display = "flex");
 window.openAchesModal = () =>
@@ -207,14 +219,13 @@ window.updateDiseaseList = () => {
     const system = document.getElementById("disease-system").value;
     const nameSelect = document.getElementById("disease-name");
     nameSelect.innerHTML = '<option value="">Select Diagnosis...</option>';
-    if (diseaseData[system]) {
-        diseaseData[system].forEach((disease) => {
-            const opt = document.createElement("option");
-            opt.value = disease;
-            opt.innerText = disease;
-            nameSelect.appendChild(opt);
-        });
-    }
+    const filtered = diseases.filter((d) => d.system === system);
+    filtered.forEach((d) => {
+        const opt = document.createElement("option");
+        opt.value = d.id;
+        opt.innerText = d.name;
+        nameSelect.appendChild(opt);
+    });
 };
 
 // --- TAG TRACKING LOGIC ---
@@ -230,10 +241,8 @@ const renderConcerns = () => {
 
         let label;
         if (item.system) {
-            // Disease Label
             label = `<b>${item.name}</b>`;
         } else {
-            // Pain Label: [Sensation] [Side] [Part] pain
             const sideStr =
                 item.side && item.side !== "N/A" ? `${item.side} ` : "";
             label = `<b>${item.sensation} ${sideStr}${item.part} Pain</b>`;
@@ -259,10 +268,16 @@ const editConcern = (id) => {
     if (item.system) {
         document.getElementById("disease-system").value = item.system;
         window.updateDiseaseList();
-        document.getElementById("disease-name").value = item.name;
+        const matchingDisease = diseases.find((d) => d.name === item.name);
+        if (matchingDisease)
+            document.getElementById("disease-name").value = matchingDisease.id;
         window.openConcernsModal();
     } else {
-        document.getElementById("pain-part").value = item.part;
+        // Find ID by name for the dropdown
+        const matchingRegion = regions.find((r) => r.name === item.part);
+        if (matchingRegion)
+            document.getElementById("pain-part").value = matchingRegion.id;
+
         document.getElementById("pain-side").value = item.side;
         document.getElementById("pain-sensation").value = item.sensation;
         window.openAchesModal();
@@ -271,13 +286,14 @@ const editConcern = (id) => {
 
 window.saveDisease = () => {
     const system = document.getElementById("disease-system").value;
-    const name = document.getElementById("disease-name").value;
-    if (!name) return;
+    const diseaseId = document.getElementById("disease-name").value;
+    if (!diseaseId) return;
 
+    const diseaseInfo = diseases.find((d) => d.id === diseaseId);
     const data = {
-        id: Store.editingConcernId || Date.now().toString(),
+        id: Store.editingConcernId || diseaseId, // Use the real ID
         system,
-        name,
+        name: diseaseInfo.name,
     };
 
     if (Store.editingConcernId) {
@@ -293,14 +309,16 @@ window.saveDisease = () => {
 };
 
 window.savePain = () => {
-    const part = document.getElementById("pain-part").value;
+    const regionId = document.getElementById("pain-part").value;
     const side = document.getElementById("pain-side").value;
     const sensation = document.getElementById("pain-sensation").value;
-    if (!part) return;
+    if (!regionId) return;
+
+    const regionInfo = regions.find((r) => r.id === regionId);
 
     const data = {
-        id: Store.editingConcernId || Date.now().toString(),
-        part,
+        id: Store.editingConcernId || regionId, // Use the real ID
+        part: regionInfo.name,
         side,
         sensation,
     };

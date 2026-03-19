@@ -122,7 +122,7 @@
 
                 <div class="actions">
                     <button id="btn-save" class="action-main">
-                        SAVE ASSESSMENT
+                        SAVE POINT
                     </button>
                     <button id="btn-clear" class="btn-secondary">
                         CLEAR POINT
@@ -138,11 +138,17 @@
                 <div class="metric-group">
                     <label>Body System</label>
                     <select id="disease-system" onchange="updateDiseaseList()">
-                        <option value="">Select System...</option>
-                        <option value="respiratory">Respiratory</option>
                         <option value="cardiovascular">Cardiovascular</option>
-                        <option value="endocrine">Endocrine</option>
+                        <option value="respiratory">Respiratory</option>
+                        <option value="digestive">Digestive</option>
                         <option value="nervous">Nervous</option>
+                        <option value="musculoskeletal">Musculoskeletal</option>
+                        <option value="endocrine">Endocrine</option>
+                        <option value="immune">Immune</option>
+                        <option value="dermatological">Dermatological</option>
+                        <option value="urinary">Urinary</option>
+                        <option value="reproductive">Reproductive</option>
+                        <option value="mental">Mental Health</option>
                     </select>
                 </div>
                 <div class="metric-group">
@@ -170,11 +176,9 @@
                 <h2>Tag Regional Pain</h2>
                 <div class="metric-group">
                     <label>Body Part</label>
-                    <input
-                        type="text"
-                        id="pain-part"
-                        placeholder="e.g. Lower Back, Shoulder"
-                    />
+                    <select id="pain-part">
+                        <option value="">Select Region...</option>
+                    </select>
                 </div>
                 <div class="metric-group">
                     <label>Side</label>
