@@ -140,7 +140,7 @@ export const diseases = [
     {
         id: "derm-her",
         system: "dermatological",
-        name: "Shingles / Herpes Zoster",
+        name: "Shingles",
     },
 
     // --- URINARY (uro) ---
@@ -158,22 +158,20 @@ export const diseases = [
     // --- REPRODUCTIVE (repr) ---
     { id: "repr-pms", system: "reproductive", name: "Severe PMS / PMDD" },
     { id: "repr-endo", system: "reproductive", name: "Endometriosis" },
-    { id: "repr-pcos", system: "reproductive", name: "PCOS" },
     {
         id: "repr-meno",
         system: "reproductive",
-        name: "Menopause / Perimenopause",
+        name: "Menopause",
     },
-    { id: "repr-fib", system: "reproductive", name: "Uterine Fibroids" },
-    { id: "repr-erect", system: "reproductive", name: "Erectile Dysfunction" },
-    { id: "repr-bph", system: "reproductive", name: "Enlarged Prostate (BPH)" },
-    { id: "repr-pros", system: "reproductive", name: "Prostate Inflammation" },
     { id: "repr-cyst", system: "reproductive", name: "Ovarian Cysts" },
     {
         id: "repr-preg",
         system: "reproductive",
         name: "Pregnancy-Related Issue",
     },
+    { id: "repr-erect", system: "reproductive", name: "Erectile Dysfunction" },
+    { id: "repr-bph", system: "reproductive", name: "Prostate Issues" },
+    { id: "repr-infer", system: "reproductive", name: "Infertility Issues" },
 
     // --- MENTAL HEALTH (ment) ---
     { id: "ment-gad", system: "mental", name: "Anxiety Disorder" },

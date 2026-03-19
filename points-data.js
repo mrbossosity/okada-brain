@@ -538,16 +538,16 @@ export const anatomicalPoints = [
             '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="R-thigh-rear" cx="295.56873" cy="258.86798" rx="3.9252155" ry="11.579386"/>',
     },
     {
-        id: "L-knee-front",
+        id: "L-knee-cap",
         view: "front",
         svgCode:
-            '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="L-knee-front" cx="108.80142" cy="298.6488" rx="8.0489998" ry="6.2449799"/>',
+            '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="L-knee-cap" cx="108.80142" cy="298.6488" rx="8.0489998" ry="6.2449799"/>',
     },
     {
-        id: "R-knee-front",
+        id: "R-knee-cap",
         view: "front",
         svgCode:
-            '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="R-knee-front" cx="77.85408" cy="298.51004" rx="8.0489998" ry="6.2449799"/>',
+            '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="R-knee-cap" cx="77.85408" cy="298.51004" rx="8.0489998" ry="6.2449799"/>',
     },
     {
         id: "L-knee-rear",
@@ -561,18 +561,18 @@ export const anatomicalPoints = [
         svgCode:
             '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="R-knee-rear" cx="281.85675" cy="301.7019" rx="7.355" ry="6.1062026"/>',
     },
-    {
-        id: "L-below-knee",
-        view: "front",
-        svgCode:
-            '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="L-below-knee" cx="108.10754" cy="311.55511" rx="7.2160001" ry="4.1633201"/>',
-    },
-    {
-        id: "R-below-knee",
-        view: "front",
-        svgCode:
-            '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="R-below-knee" cx="78.409187" cy="311.55511" rx="7.2160001" ry="4.1633201"/>',
-    },
+    // {
+    //     id: "L-below-knee",
+    //     view: "front",
+    //     svgCode:
+    //         '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="L-below-knee" cx="108.10754" cy="311.55511" rx="7.2160001" ry="4.1633201"/>',
+    // },
+    // {
+    //     id: "R-below-knee",
+    //     view: "front",
+    //     svgCode:
+    //         '<ellipse xmlns="http://www.w3.org/2000/svg" style="fill:#ffffff;fill-opacity:0;stroke:#000000;stroke-opacity:1" id="R-below-knee" cx="78.409187" cy="311.55511" rx="7.2160001" ry="4.1633201"/>',
+    // },
     {
         id: "L-calf-front",
         view: "front",
