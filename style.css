@@ -2,243 +2,132 @@
     --primary: #2c3e50;
     --accent: #e74c3c;
     --active-blue: #3498db;
+    --bg-gray: #f4f7f9;
+    --panel-bg: #ffffff;
+    --border-color: #e0e0e0;
+    --text-main: #2c3e50;
+    --text-muted: #888;
 }
 
-/* 1. GLOBAL RESET & LAYOUT */
-body { 
-    font-family: sans-serif; 
-    background: #f4f4f4; 
-    margin: 0; 
-    overflow: hidden; /* Prevents whole-page scrolling */
+/* Global Font Consistency */
+body, button, textarea, input {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-main);
 }
 
-.app-container { 
+body { background: var(--bg-gray); margin: 0; overflow: hidden; }
+
+.app-container { display: flex; height: 100vh; width: 100vw; }
+
+.main-content { flex: 1; display: flex; flex-direction: column; padding: 20px; align-items: center; min-width: 0; }
+
+.view-tabs { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; max-width: 800px; }
+
+.tab-btn { padding: 10px 20px; background: #fff; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; font-weight: 600; color: var(--text-muted); transition: 0.2s; }
+.tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+.map-viewport { flex-grow: 1; width: 100%; max-width: 800px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; overflow: hidden; position: relative; }
+
+.view-group { display: none; height: 95%; width: 100%; justify-content: center; align-items: center; }
+.view-group.active { display: flex; }
+
+.svg-wrapper { position: relative; height: 100%; display: inline-block; line-height: 0; }
+.base-graphic { height: 100%; width: auto; opacity: 0.4; display: block; pointer-events: none; }
+
+svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
+svg * { cursor: pointer !important; transition: all 0.2s ease; paint-order: stroke fill; }
+
+/* SIDE PANEL REFINEMENT */
+.side-panel { 
+    width: 350px; 
+    background: var(--panel-bg); 
+    border-left: 1px solid var(--border-color); 
     display: flex; 
-    flex-direction: column;
-    align-items: center;
-    padding: 15px;
-    height: 100vh; /* Exactly the height of the screen */
+    flex-direction: column; 
+    padding: 24px; 
     box-sizing: border-box;
 }
 
-/* 2. TAB NAVIGATION (Fixed Top) */
-.view-tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    flex-shrink: 0; 
+.panel-section { margin-bottom: 32px; } /* Increased spacing between sections */
+.panel-section.flex-grow { flex-grow: 1; display: flex; flex-direction: column; }
+
+.panel-section h3 { 
+    font-size: 0.75rem; 
+    letter-spacing: 1.2px; 
+    color: var(--text-muted); 
+    text-transform: uppercase; 
+    border-bottom: 1px solid #eee; 
+    padding-bottom: 10px; 
+    margin: 0 0 15px 0; 
 }
 
-.tab-btn {
-    padding: 10px 25px;
-    background: #ddd;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #666;
-    transition: all 0.3s;
+/* Styled Action Buttons */
+.concern-actions { display: flex; flex-direction: column; gap: 8px; }
+
+.secondary-btn { 
+    background: #f8f9fa; 
+    border: 1px solid #dcdfe3; 
+    color: #4b5563; 
+    padding: 10px 15px; 
+    border-radius: 6px; 
+    font-size: 0.85rem; 
+    font-weight: 500; 
+    text-align: left; 
+    cursor: pointer; 
+    transition: all 0.2s;
 }
 
-.tab-btn.active {
-    background: var(--primary);
-    color: white;
-}
-
-/* 3. THE VIEWPORT (Flexible Middle Area) */
-.map-viewport {
-    flex-grow: 1; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    width: 95%;
-    max-width: 1200px;
-    overflow: hidden; 
-    min-height: 0;   
-}
-
-.view-group {
-    display: none; 
-    height: 100%;
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-}
-
-.view-group.active {
-    display: flex; 
-    animation: fadeIn 0.3s ease-in;
-}
-
-.view-group h3 {
+.secondary-btn:hover { 
+    background: #edf2f7; 
+    border-color: #cbd5e0; 
     color: var(--primary);
-    margin: 0 0 10px 0; 
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    flex-shrink: 0;
 }
 
-/* 4. THE STACKING & DYNAMIC SIZING (Offset Fixes) */
-.svg-wrapper {
-    position: relative;
-    display: inline-flex; /* Ensures wrapper stays tight to image */
-    height: 100%;      
-    min-height: 0;     
-    line-height: 0;    /* Kills font-related gaps */
-}
-
-.base-graphic { 
-    display: block;    /* Kills baseline gap */
-    vertical-align: top;
-    width: auto;
-    max-width: 100%;
-    max-height: 100%;  
-    pointer-events: none; 
-    opacity: 0.5;
-}
-
-#body-map-front, 
-#body-map-head {
-    position: absolute;
-    top: 0; 
-    left: 0; 
+textarea { 
+    flex-grow: 1; 
     width: 100%; 
-    height: 100%;
-    z-index: 2;
+    border: 1px solid #e2e8f0; 
+    border-radius: 8px; 
+    padding: 15px; 
+    resize: none; 
+    background: #fafafa; 
+    box-sizing: border-box; 
+    font-size: 0.9rem; 
+    line-height: 1.5; 
+    outline: none;
 }
+textarea:focus { border-color: var(--active-blue); background: #fff; }
 
-/* 5. MARKER STYLING & TOOLTIP */
-svg * {
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+/* MODAL & UI COMPONENTS */
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); justify-content: center; align-items: center; }
+.modal-content { background: white; width: 340px; padding: 30px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
 
-.tooltip {
-    position: absolute;
-    padding: 6px 12px;
-    background: rgba(44, 62, 80, 0.95);
-    color: white;
-    border-radius: 4px;
-    font-size: 11px;
-    pointer-events: none;
-    display: none;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
+.modal-content h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 20px; color: var(--primary); }
 
-/* 6. MODAL STYLING */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 100;
-    left: 0; top: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(4px);
-}
+.metric-group { margin-bottom: 20px; }
+.metric-group label { font-size: 0.8rem; font-weight: 600; color: #64748b; display: block; margin-bottom: 8px; }
 
-.modal-content {
-    background: white;
-    width: 320px; /* Slightly wider for better button fit */
-    margin: 10vh auto; 
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-}
-
-.input-group { margin-bottom: 18px; }
-.input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; font-size: 0.85rem; }
-
-/* 7. BUTTON SCALE (1-5) */
-.button-scale {
-    display: flex;
-    justify-content: space-between;
-    gap: 6px;
-}
-
-.button-scale button {
-    flex: 1; /* This makes them stretch to fill the container */
-    height: 38px;
-    background: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-weight: bold;
-    color: #444;
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* Ensure all modal buttons show the pointer cursor */
-.modal-content button {
-    cursor: pointer;
-}
-
-/* Optional: Add a subtle hover effect to the 1-5 buttons for better UX */
-.button-scale button:hover {
-    background: #e8e8e8;
-    border-color: #bbb;
-}
-
-/* Ensure the active button keeps its pointer but loses the hover gray */
-.button-scale button.active:hover {
-    filter: brightness(0.9); /* Slightly darkens the active color instead of turning gray */
-}
-
-/* The Save/Clear/Cancel buttons should also react slightly */
-.action-main:hover {
-    filter: brightness(1.1);
-}
-
-.action-secondary button:hover {
-    background: #f0f0f0;
-}
-
-/* HIGH VISIBILITY ACTIVE STATES */
-.button-scale button.active {
-    color: white !important;
-    border-color: rgba(0,0,0,0.1) !important;
-}
-
-/* Custom colors based on metric type */
-.button-scale[data-metric="heat"] button.active { background: #e74c3c; }
-.button-scale[data-metric="stiffness"] button.active { background: #f39c12; }
-.button-scale[data-metric="pain"] button.active { background: #9b59b6; }
-
-/* 8. MODAL ACTIONS (Save/Cancel/Clear) */
-.actions { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 10px;
-    margin-top: 25px;
-}
-
-.action-main {
-    width: 100%;
-    padding: 12px; /* Reduced from 16px to fix the "too big" feel */
-    background: var(--primary);
-    color: white;
+.button-scale { display: flex; gap: 6px; }
+.button-scale button { 
+    flex: 1; 
+    height: 38px; 
+    border-radius: 6px; 
+    border: 1px solid #e2e8f0; 
+    background: white; 
+    cursor: pointer; 
+    font-weight: 600; 
     font-size: 0.9rem;
-    font-weight: 700;
-    border-radius: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    transition: 0.2s; 
 }
 
-.action-secondary {
-    display: flex;
-    gap: 8px;
-}
+.button-scale button.active { color: white !important; transform: translateY(-1px); }
+.button-scale[data-metric="heat"] button.active { background: var(--accent); border-color: var(--accent); }
+.button-scale[data-metric="stiffness"] button.active { background: #f39c12; border-color: #f39c12; }
+.button-scale[data-metric="pain"] button.active { background: #9b59b6; border-color: #9b59b6; }
 
-.action-secondary button {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
+.actions { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
+.action-main { padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+.btn-secondary { background: #f1f5f9; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; color: #475569; font-size: 0.85rem; }
+.btn-text { background: transparent; border: none; cursor: pointer; color: #94a3b8; padding: 5px; font-size: 0.85rem; }
 
-#btn-clear { background: #fff; color: var(--accent); border: 1px solid #fadbd8; }
-#btn-cancel { background: #f8f9fa; color: #888; border: 1px solid #eee; }
+.tooltip { position: absolute; background: var(--primary); color: white; padding: 6px 12px; border-radius: 4px; font-size: 11px; display: none; z-index: 2000; pointer-events: none; text-transform: uppercase; font-weight: bold; }
