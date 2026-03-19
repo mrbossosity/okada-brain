@@ -3,8 +3,8 @@ import { anatomicalPoints } from "./points-data.js";
 const Store = {
     patientVector: {},
     activeId: null,
-    concerns: [], // Track diseases and pain tags
-    editingConcernId: null, // Track if we are editing an existing tag
+    concerns: [],
+    editingConcernId: null,
 
     update(id, data) {
         this.patientVector[id] = { ...data };
@@ -64,17 +64,14 @@ anatomicalPoints.forEach((pt) => {
         if (!document.getElementById(pt.id)) {
             container.insertAdjacentHTML("beforeend", pt.svgCode);
         }
-
         const el = document.getElementById(pt.id);
         if (el) {
             el.removeAttribute("style");
             Store.syncUI(pt.id);
-
             el.onclick = (e) => {
                 e.stopPropagation();
                 openModal(pt.id);
             };
-
             el.onmouseenter = () => {
                 tooltip.innerText = pt.id.replace(/-/g, " ");
                 tooltip.style.display = "block";
@@ -92,12 +89,10 @@ anatomicalPoints.forEach((pt) => {
                     );
                 }
             };
-
             el.onmousemove = (e) => {
                 tooltip.style.left = e.pageX + 15 + "px";
                 tooltip.style.top = e.pageY + 15 + "px";
             };
-
             el.onmouseleave = () => {
                 tooltip.style.display = "none";
                 el.style.setProperty("filter", "none", "important");
@@ -147,22 +142,22 @@ document.getElementById("btn-save").onclick = () => {
     Store.update(Store.activeId, tempState);
     modal.style.display = "none";
 };
-
 document.getElementById("btn-clear").onclick = () => {
     Store.update(Store.activeId, { heat: 0, stiffness: 0, pain: 0 });
     modal.style.display = "none";
 };
-
 document.getElementById("btn-cancel").onclick = () =>
     (modal.style.display = "none");
 
 // --- VIEW & EXPORT ---
 window.switchView = (v) => {
-    document
-        .querySelectorAll(".tab-btn")
-        .forEach((b) =>
-            b.classList.toggle("active", b.innerText.toLowerCase().includes(v)),
-        );
+    document.querySelectorAll(".tab-btn").forEach((b) => {
+        const text = b.innerText.toLowerCase();
+        const isActive =
+            (v === "front" && text.includes("body")) ||
+            (v === "head" && text.includes("head"));
+        b.classList.toggle("active", isActive);
+    });
     document
         .querySelectorAll(".view-group")
         .forEach((g) => g.classList.toggle("active", g.id === `view-${v}`));
@@ -170,8 +165,9 @@ window.switchView = (v) => {
 
 window.exportJSON = () => {
     const exportData = {
-        assessments: Store.patientVector,
-        concerns: Store.concerns,
+        "key points": Store.patientVector,
+        diseases: Store.concerns.filter((c) => c.system),
+        pain: Store.concerns.filter((c) => c.part),
         notes: document.getElementById("clinical-notes").value,
     };
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
@@ -191,7 +187,6 @@ const diseaseData = {
     nervous: ["Sciatica", "Neuropathy", "Multiple Sclerosis"],
 };
 
-// Open/Close Handlers
 window.openConcernsModal = () =>
     (document.getElementById("disease-modal").style.display = "flex");
 window.openAchesModal = () =>
@@ -199,8 +194,7 @@ window.openAchesModal = () =>
 
 window.closeModal = (id) => {
     document.getElementById(id).style.display = "none";
-    Store.editingConcernId = null; // Clear edit state on close
-    // Clear inputs for next time
+    Store.editingConcernId = null;
     if (id === "pain-modal") document.getElementById("pain-part").value = "";
     if (id === "disease-modal") {
         document.getElementById("disease-system").value = "";
@@ -234,10 +228,16 @@ const renderConcerns = () => {
         div.className = "tag-item";
         div.onclick = () => editConcern(item.id);
 
-        const label =
-            item.type === "disease"
-                ? `<b>${item.name}</b>`
-                : `<b>${item.side !== "N/A" ? item.side + " " : ""}${item.part}</b> (${item.sensation})`;
+        let label;
+        if (item.system) {
+            // Disease Label
+            label = `<b>${item.name}</b>`;
+        } else {
+            // Pain Label: [Sensation] [Side] [Part] pain
+            const sideStr =
+                item.side && item.side !== "N/A" ? `${item.side} ` : "";
+            label = `<b>${item.sensation} ${sideStr}${item.part} Pain</b>`;
+        }
 
         div.innerHTML = `
             <div class="tag-content">${label}</div>
@@ -256,7 +256,7 @@ const editConcern = (id) => {
     const item = Store.concerns.find((c) => c.id === id);
     Store.editingConcernId = id;
 
-    if (item.type === "disease") {
+    if (item.system) {
         document.getElementById("disease-system").value = item.system;
         window.updateDiseaseList();
         document.getElementById("disease-name").value = item.name;
@@ -276,7 +276,6 @@ window.saveDisease = () => {
 
     const data = {
         id: Store.editingConcernId || Date.now().toString(),
-        type: "disease",
         system,
         name,
     };
@@ -289,7 +288,6 @@ window.saveDisease = () => {
     } else {
         Store.concerns.push(data);
     }
-
     window.closeModal("disease-modal");
     renderConcerns();
 };
@@ -302,7 +300,6 @@ window.savePain = () => {
 
     const data = {
         id: Store.editingConcernId || Date.now().toString(),
-        type: "pain",
         part,
         side,
         sensation,
@@ -316,12 +313,10 @@ window.savePain = () => {
     } else {
         Store.concerns.push(data);
     }
-
     window.closeModal("pain-modal");
     renderConcerns();
 };
 
-// Global click handler
 window.onclick = (event) => {
     if (event.target == modal) modal.style.display = "none";
     if (event.target.classList.contains("modal"))
