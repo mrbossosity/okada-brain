@@ -1,102 +1,213 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Okada Brain</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Okada Brain</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="app-container">
+            <main class="main-content">
+                <div class="view-tabs">
+                    <button
+                        class="tab-btn active"
+                        onclick="switchView('front')"
+                    >
+                        Body View
+                    </button>
+                    <button class="tab-btn" onclick="switchView('head')">
+                        Head / Neck View
+                    </button>
+                    <div style="flex-grow: 1"></div>
+                    <button class="tab-btn export-btn" onclick="exportJSON()">
+                        Export Data
+                    </button>
+                </div>
 
-<div class="app-container">
-    <main class="main-content">
-        <div class="view-tabs">
-            <button class="tab-btn active" onclick="switchView('front')">Body View</button>
-            <button class="tab-btn" onclick="switchView('head')">Head / Neck View</button>
-            <div style="flex-grow: 1;"></div>
-            <button class="tab-btn export-btn" onclick="exportJSON()">Export Data</button>
+                <div class="map-viewport">
+                    <div id="view-front" class="view-group active">
+                        <div class="svg-wrapper">
+                            <img
+                                src="./assets/front-back-body-chart-sample.png"
+                                class="base-graphic"
+                                alt="Front Body"
+                            />
+                            <svg
+                                id="body-map-front"
+                                viewBox="0 0 373 415"
+                            ></svg>
+                        </div>
+                    </div>
+
+                    <div id="view-head" class="view-group">
+                        <div class="svg-wrapper">
+                            <img
+                                src="./assets/head-profile-top-sample.png"
+                                class="base-graphic"
+                                alt="Head View"
+                            />
+                            <svg id="body-map-head" viewBox="0 0 456 320"></svg>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <aside class="side-panel">
+                <div class="panel-section">
+                    <h3>Patient Concerns</h3>
+                    <div class="concern-actions">
+                        <button
+                            class="secondary-btn"
+                            onclick="openConcernsModal()"
+                        >
+                            + Disease
+                        </button>
+                        <button
+                            class="secondary-btn"
+                            onclick="openAchesModal()"
+                        >
+                            + Pain
+                        </button>
+                    </div>
+                    <div id="concerns-list" class="tags-container"></div>
+                </div>
+
+                <div class="panel-section flex-grow">
+                    <h3>Session Notes</h3>
+                    <textarea
+                        id="clinical-notes"
+                        placeholder="Enter findings..."
+                    ></textarea>
+                </div>
+            </aside>
         </div>
 
-        <div class="map-viewport">
-            <div id="view-front" class="view-group active">
-                <div class="svg-wrapper">
-                    <img src="./assets/front-back-body-chart-sample.png" class="base-graphic" alt="Front Body">
-                    <svg id="body-map-front" viewBox="0 0 373 415"></svg>
+        <div id="input-modal" class="modal">
+            <div class="modal-content">
+                <h2 id="modal-title">Point Assessment</h2>
+
+                <div class="metric-group">
+                    <label>Fever</label>
+                    <div class="button-scale" data-metric="heat">
+                        <button onclick="setMetric('heat', 1)">1</button>
+                        <button onclick="setMetric('heat', 2)">2</button>
+                        <button onclick="setMetric('heat', 3)">3</button>
+                        <button onclick="setMetric('heat', 4)">4</button>
+                        <button onclick="setMetric('heat', 5)">5</button>
+                    </div>
+                </div>
+
+                <div class="metric-group">
+                    <label>Stiffness</label>
+                    <div class="button-scale" data-metric="stiffness">
+                        <button onclick="setMetric('stiffness', 1)">1</button>
+                        <button onclick="setMetric('stiffness', 2)">2</button>
+                        <button onclick="setMetric('stiffness', 3)">3</button>
+                        <button onclick="setMetric('stiffness', 4)">4</button>
+                        <button onclick="setMetric('stiffness', 5)">5</button>
+                    </div>
+                </div>
+
+                <div class="metric-group">
+                    <label>Tenderness</label>
+                    <div class="button-scale" data-metric="pain">
+                        <button onclick="setMetric('pain', 1)">1</button>
+                        <button onclick="setMetric('pain', 2)">2</button>
+                        <button onclick="setMetric('pain', 3)">3</button>
+                        <button onclick="setMetric('pain', 4)">4</button>
+                        <button onclick="setMetric('pain', 5)">5</button>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="btn-save" class="action-main">
+                        SAVE ASSESSMENT
+                    </button>
+                    <button id="btn-clear" class="btn-secondary">
+                        CLEAR POINT
+                    </button>
+                    <button id="btn-cancel" class="btn-text">Cancel</button>
                 </div>
             </div>
+        </div>
 
-            <div id="view-head" class="view-group">
-                <div class="svg-wrapper">
-                    <img src="./assets/head-profile-top-sample.png" class="base-graphic" alt="Head View">
-                    <svg id="body-map-head" viewBox="0 0 456 320"></svg>
+        <div id="disease-modal" class="modal">
+            <div class="modal-content">
+                <h2>Add Condition</h2>
+                <div class="metric-group">
+                    <label>Body System</label>
+                    <select id="disease-system" onchange="updateDiseaseList()">
+                        <option value="">Select System...</option>
+                        <option value="respiratory">Respiratory</option>
+                        <option value="cardiovascular">Cardiovascular</option>
+                        <option value="endocrine">Endocrine</option>
+                        <option value="nervous">Nervous</option>
+                    </select>
+                </div>
+                <div class="metric-group">
+                    <label>Specific Diagnosis</label>
+                    <select id="disease-name">
+                        <option value="">Select System First...</option>
+                    </select>
+                </div>
+                <div class="actions">
+                    <button class="action-main" onclick="saveDisease()">
+                        ADD TO NOTES
+                    </button>
+                    <button
+                        class="btn-text"
+                        onclick="closeModal('disease-modal')"
+                    >
+                        Cancel
+                    </button>
                 </div>
             </div>
         </div>
-    </main>
 
-    <aside class="side-panel">
-        <div class="panel-section">
-            <h3>Patient Concerns</h3>
-            <div class="concern-actions">
-                <button class="secondary-btn" onclick="openConcernsModal()">+ Disease</button>
-                <button class="secondary-btn" onclick="openAchesModal()">+ Pain</button>
+        <div id="pain-modal" class="modal">
+            <div class="modal-content">
+                <h2>Tag Regional Pain</h2>
+                <div class="metric-group">
+                    <label>Body Part</label>
+                    <input
+                        type="text"
+                        id="pain-part"
+                        placeholder="e.g. Lower Back, Shoulder"
+                    />
+                </div>
+                <div class="metric-group">
+                    <label>Side</label>
+                    <select id="pain-side">
+                        <option value="N/A">N/A (Center)</option>
+                        <option value="Left">Left</option>
+                        <option value="Right">Right</option>
+                        <option value="Bilateral">Bilateral</option>
+                    </select>
+                </div>
+                <div class="metric-group">
+                    <label>Sensation</label>
+                    <select id="pain-sensation">
+                        <option value="Ache">Ache</option>
+                        <option value="Numbness">Numbness</option>
+                        <option value="Tingling">Tingling</option>
+                        <option value="Shooting">Shooting</option>
+                        <option value="Sharp">Sharp</option>
+                    </select>
+                </div>
+                <div class="actions">
+                    <button class="action-main" onclick="savePain()">
+                        TAG PAIN
+                    </button>
+                    <button class="btn-text" onclick="closeModal('pain-modal')">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="panel-section flex-grow">
-            <h3>Session Notes</h3>
-            <textarea id="clinical-notes" placeholder="Enter findings..."></textarea>
-        </div>
-    </aside>
-</div>
+        <div id="tooltip" class="tooltip"></div>
 
-<div id="input-modal" class="modal">
-    <div class="modal-content">
-        <h2 id="modal-title">Point Assessment</h2>
-        
-        <div class="metric-group">
-            <label>Fever</label>
-            <div class="button-scale" data-metric="heat">
-                <button onclick="setMetric('heat', 1)">1</button>
-                <button onclick="setMetric('heat', 2)">2</button>
-                <button onclick="setMetric('heat', 3)">3</button>
-                <button onclick="setMetric('heat', 4)">4</button>
-                <button onclick="setMetric('heat', 5)">5</button>
-            </div>
-        </div>
-
-        <div class="metric-group">
-            <label>Stiffness</label>
-            <div class="button-scale" data-metric="stiffness">
-                <button onclick="setMetric('stiffness', 1)">1</button>
-                <button onclick="setMetric('stiffness', 2)">2</button>
-                <button onclick="setMetric('stiffness', 3)">3</button>
-                <button onclick="setMetric('stiffness', 4)">4</button>
-                <button onclick="setMetric('stiffness', 5)">5</button>
-            </div>
-        </div>
-
-        <div class="metric-group">
-            <label>Tenderness</label>
-            <div class="button-scale" data-metric="pain">
-                <button onclick="setMetric('pain', 1)">1</button>
-                <button onclick="setMetric('pain', 2)">2</button>
-                <button onclick="setMetric('pain', 3)">3</button>
-                <button onclick="setMetric('pain', 4)">4</button>
-                <button onclick="setMetric('pain', 5)">5</button>
-            </div>
-        </div>
-
-        <div class="actions">
-            <button id="btn-save" class="action-main">SAVE ASSESSMENT</button>
-            <button id="btn-clear" class="btn-secondary">CLEAR POINT</button>
-            <button id="btn-cancel" class="btn-text">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div id="tooltip" class="tooltip"></div>
-
-<script type="module" src="main.js"></script>
-</body>
+        <script type="module" src="main.js"></script>
+    </body>
 </html>
